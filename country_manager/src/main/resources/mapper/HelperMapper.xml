@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.HelperMapper">
+    <resultMap id="helperMap" type="helper">
+        <id column="helper_id" property="helperId"></id>
+        <result column="helper_Population_id" property="helperPopulationId"></result>
+        <result column="helper_type" property="helperType"></result>
+        <result column="helper_time" property="helperTime"></result>
+        <result column="helper_status" property="helperStatus"></result>
+        <result column="helper_executed" property="helperExecuted"></result>
+        <result column="helper_village_id" property="helperVillageId"></result>
+        <association property="population" javaType="population">
+            <id column="id" property="id"></id>
+            <result column="population_id" property="populationId"></result>
+            <result column="population_name" property="populationName"></result>
+        </association>
+        <association property="village" javaType="village">
+            <id column="village_id" property="villageId"></id>
+            <result column="village_num" property="villageNum"></result>
+            <result column="village_name" property="villageName"></result>
+        </association>
+    </resultMap>
+    <select id="getHelperList" resultMap="helperMap">
+        select * from helper_manage hm,village_manage vm,population_manage pm where hm.helper_population_id=pm.population_id and hm.helper_village_id=vm.village_id
+    </select>
+    <select id="getAllHelper" resultMap="helperMap" parameterType="helper">
+        select * from helper_manage hm,village_manage vm,population_manage pm where hm.helper_population_id=pm.population_id and hm.helper_village_id=vm.village_id
+        <if test="helperPopulationId!=null and helperPopulationId!='' ">
+           and helper_Population_id like '%${helperPopulationId}%'
+        </if>
+        <if test="helperType!=null and helperType!=''">
+            and helper_type like '%${helperType}%'
+        </if>
+        <if test="helperExecuted!=null and helperExecuted!=''">
+            and helper_executed like '%${helperExecuted}%'
+        </if>
+        <if test="helperStatus!=null and helperStatus!=''">
+            and helper_status like '%${helperStatus}%'
+        </if>
+    </select>
+    <select id="getHelperById" parameterType="int">
+        select * from helper_manage hm,village_manage vm,population_manage pm where hm.helper_population_id=pm.population_id and hm.helper_village_id=vm.village_id and helper_id=#{id}
+    </select>
+    <select id="getHelperByVillageId" parameterType="int">
+        select * from helper_manage hm,village_manage vm,population_manage pm where hm.helper_population_id=pm.population_id and hm.helper_village_id=vm.village_id and helper_village_id=#{id}
+    </select>
+    <insert id="addHelper" parameterType="helper">
+        insert into helper_manage(helper_type,helper_time,helper_executed,helper_Population_id,helper_village_id,helper_status) values(#{helperType},#{helperTime},#{helperExecuted},#{helperPopulationId},#{helperVillageId},#{helperStatus})
+    </insert>
+    <delete id="deleteHelper" parameterType="int">
+        delete from helper_manage where helper_id=#{id}
+    </delete>
+    <update id="updateHelper" parameterType="helper">
+        update helper_manage set helper_population_id=#{helperPopulationId},helper_type=#{helperType},helper_time=#{helperTime},helper_status=#{helperStatus},helper_executed=#{helperExecuted},helper_village_id=#{helperVillageId} where helper_id=#{helperId}
+    </update>
+</mapper>

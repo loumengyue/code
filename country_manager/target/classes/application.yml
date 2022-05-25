@@ -1,0 +1,31 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/country_manager?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+
+#配置文件上传
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB #单个文件的最大值
+      max-request-size: 10MB #单个请求多个文件的最大值
+      file-size-threshold: 0KB  #文件大于该阈值，将写入磁盘
+
+
+mybatis-plus:
+  type-aliases-package: com.xiumu.country_manager.pojo
+  mapper-locations: classpath:mapper/*Mapper.xml
+  # 打印日志的配置   mybatis-plus内置的有日志打印功能  mybatis里面也内置的有日志 打印功能
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    map-underscore-to-camel-case: true  #这个是配置是开启下划线对应驼峰的命名法
+
+#盐 值
+jwt:
+  secret: 76bd425b6f29f7fcc2e0bfc286043df1

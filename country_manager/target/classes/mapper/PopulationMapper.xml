@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.PopulationMapper">
+    <resultMap id="populationMap" type="population">
+        <id column="id" property="id"></id>
+        <id column="population_id" property="populationId"></id>
+        <result column="population_name" property="populationName"></result>
+        <result column="population_age" property="populationAge"></result>
+        <result column="population_address" property="populationAddress"></result>
+        <result column="population_type" property="populationType"></result>
+        <result column="population_local_type" property="populationLocalType"></result>
+        <result column="population_village_id" property="populationVillageId"></result>
+        <association property="village" javaType="village">
+            <id column="village_id" property="villageId"></id>
+            <result column="village_num" property="villageNum"></result>
+            <result column="village_name" property="villageName"></result>
+            <result column="village_address" property="villageAddress"></result>
+            <result column="village_leading" property="villageLeading"></result>
+            <result column="village_phone" property="villagePhone"></result>
+        </association>
+    </resultMap>
+    <select id="getPopulationList" resultMap="populationMap" >
+        select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id
+    </select>
+    <select id="getAllPopulation" resultMap="populationMap" parameterType="population">
+        select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id
+        <if test="populationId!=null">
+           and population_id like '%${populationId}%'
+        </if>
+        <if test="populationName!=null">
+            and population_name like '%${populationName}%'
+        </if>
+    </select>
+    <select id="getPopulationByVillageId" resultMap="populationMap" parameterType="int">
+        select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id and population_village_id=#{populationVillageId}
+
+    </select>
+    <select id="getPopulationById" parameterType="int" resultMap="populationMap">
+        select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id and pm.id=#{id}
+    </select>
+    <insert id="addPopulation" parameterType="population">
+        insert into population_manage(population_id,population_name,population_age,population_address,population_type,population_local_type,population_village_id) value(#{populationId},#{populationName},#{populationAge},#{populationAddress},#{populationType},#{populationLocalType},#{populationVillageId})
+    </insert>
+    <delete id="deletePopulation" parameterType="int">
+        delete from population_manage where population_id=#{id}
+    </delete>
+    <update id="updatePopulation" parameterType="population">
+        update population_manage set population_id=#{populationId},population_name=#{populationName},population_age=#{populationAge},population_address=#{populationAddress},population_type=#{populationType},population_local_type=#{populationLocalType},population_village_id=#{populationVillageId} where id=#{id}
+    </update>
+    <select id="getPopulationByName" resultMap="populationMap" parameterType="string">
+       select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id and pm.population_name=#{populationName}
+    </select>
+    <select id="getPopulationByPopulationId" resultMap="populationMap" parameterType="string">
+        select * from population_manage pm,village_manage vm where pm.population_village_id=vm.village_id and pm.population_id=#{id}
+    </select>
+</mapper>

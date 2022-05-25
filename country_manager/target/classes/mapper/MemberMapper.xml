@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.MemberMapper">
+    <resultMap id="memberMap" type="member">
+        <id column="id" property="id"></id>
+        <result column="member_id" property="memberId"></result>
+        <result column="member_name" property="memberName"></result>
+        <result column="member_status" property="memberStatus"></result>
+        <result column="member_identity" property="memberIdentity"></result>
+        <result column="member_start_time" property="memberStartTime"></result>
+        <result column="member_end_time" property="memberEndTime"></result>
+        <result column="member_active_time" property="memberActiveTime"></result>
+        <result column="member_party_id" property="memberPartyId"></result>
+        <association property="party" javaType="party">
+            <id column="party_id" property="partyId"></id>
+            <result column="party_name" property="partyName"></result>
+            <result column="parent_party" property="parentParty"></result>
+            <result column="party_start_time" property="partyStartTime"></result>
+        </association>
+    </resultMap>
+    <select id="getMemberList" resultMap="memberMap">
+        select * from member_manage mm,party_manage pm where mm.member_party_id=pm.party_id
+    </select>
+
+    <select id="getAllMember" resultMap="memberMap">
+        select * from member_manage mm,party_manage pm where mm.member_party_id=pm.party_id
+        <if test="memberId!=null and memberId!=''">
+            and mm.member_id like '%${memberId}%'
+        </if>
+        <if test="memberName!=null and memberName!=''">
+            and mm.member_name like '%${memberName}%'
+        </if>
+        <if test="memberStatus!=null and memberStatus!=''">
+            and mm.member_status like '%${memberStatus}%'
+        </if>
+    </select>
+    <select id="getMemberById" parameterType="int" resultMap="memberMap">
+        select * from member_manage mm,party_manage pm where mm.member_party_id=pm.party_id and mm.member_id=#{id}
+    </select>
+    <insert id="addMember" parameterType="member">
+        insert  into member_manage (memeber_id,member_name,member_status,member_identity,member_start_time,member_end_time,member_active_time,member_party_id) values(#{memberId},#{memberName},#{memberStatus},#{memberIdentity},#{memberStartTime},#{memberEndTime},#{memberActiveTime},#{memberPartyId})
+    </insert>
+    <delete id="deleteMember" parameterType="int">
+        delete from member_manage where member_id=#{id}
+    </delete>
+    <update id="updateMember" parameterType="member">
+        update member_manage set member_name=#{memberName} where id=#{id}
+    </update>
+</mapper>

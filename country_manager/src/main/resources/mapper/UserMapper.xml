@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.UserMapper">
+    <resultMap id="userMap" type="user">
+        <id column="user_id" property="userId"></id>
+        <result column="user_name" property="userName"></result>
+        <result column="password" property="password"></result>
+        <result column="gender" property="gender"></result>
+        <result column="user_phone" property="userPhone"></result>
+        <result column="nick_name" property="nickName"></result>
+        <result column="user_role_id" property="userRoleId"></result>
+        <result column="user_village_id" property="userVillageId"></result>
+        <result column="user_status" property="userStatus"></result>
+        <result column="user_post" property="userPost"></result>
+        <result column="user_desc" property="userDesc"></result>
+        <association property="role" javaType="role">
+            <id column="role_id" property="roleId"></id>
+            <result column="role_name" property="roleName"></result>
+            <result column="role_code" property="roleCode"></result>
+        </association>
+        <association property="village" javaType="village">
+            <id column="village_id" property="villageId"></id>
+            <result column="village_num" property="villageNum"></result>
+            <result column="village_name" property="villageName"></result>
+            <result column="village_address" property="villageAddress"></result>
+            <result column="village_leading" property="villageLeading"></result>
+            <result column="village_phone" property="villagePhone"></result>
+        </association>
+    </resultMap>
+    <select id="getUserList" resultMap="userMap">
+    select * from user_manage um,role_manage rm,village_manage vm where um.user_role_id=rm.role_id and um.user_village_id=vm.village_id
+    </select>
+    <select id="getAllUser" resultMap="userMap" parameterType="user">
+        select * from user_manage um,role_manage rm,village_manage vm where um.user_role_id=rm.role_id and um.user_village_id=vm.village_id
+        <if test="nickName!=null and nickName!=''">
+            and nick_name like '%${nickName}%'
+        </if>
+        <if test="userName!=null and userName!=''">
+            and user_name like '%${userName}%'
+        </if>
+        <if test="userPost!=null and userPost!=''">
+            and user_post like '%${userPost}%'
+        </if>
+        <if test="userPhone!=null and  userPhone!=''">
+            and user_phone = #{userPhone}
+        </if>
+
+    </select>
+    <select id="getUserById" parameterType="int" resultMap="userMap">
+        select * from user_manage um,role_manage rm,village_manage vm where um.user_role_id=rm.role_id and um.user_village_id=vm.village_id where um.user_id=#{id}
+    </select>
+    <insert id="addUser" parameterType="user">
+        insert into user_manage (user_name,password,gender,nick_name,user_role_id,user_village_id,user_status,user_post,user_desc) values(#{userName},#{password},#{gender},#{nickName},#{userRoleId},#{userVillageId},#{userStatus},#{userPost},#{userDesc})
+    </insert>
+    <delete id="deleteUser" parameterType="int">
+        delete from user_manage where user_id=#{id}
+    </delete>
+    <update id="updateUser" parameterType="user">
+        update user_manage set user_name=#{userName},password=#{password},gender=#{gender},nick_name=#{nickName},user_role_id=#{userRoleId},user_village_id=#{userVillageId},user_status=#{userStatus},user_post=#{userPost},user_desc=#{userDesc} where user_id=#{userId}
+    </update>
+
+    <select id="getUserByName" parameterType="string"  resultMap="userMap">
+        select * from user_manage um,role_manage rm,village_manage vm where um.user_role_id=rm.role_id and um.user_village_id=vm.village_id and um.user_name =#{userName}
+    </select>
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.VillageMapper">
+    <resultMap id="villageMap" type="village">
+        <id column="village_id" property="villageId"></id>
+        <result column="village_num" property="villageNum"></result>
+        <result column="village_name" property="villageName"></result>
+        <result column="village_address" property="villageAddress"></result>
+        <result column="village_leading" property="villageLeading"></result>
+        <result column="village_phone" property="villagePhone"></result>
+    </resultMap>
+    <select id="getAllVillage" parameterType="village" resultMap="villageMap">
+       select * from village_manage
+       <where>
+           <if test="villageName != null">
+               and village_name like '%${villageName}%'
+           </if>
+           <if test="villagePhone != null">
+                and village_phone like '%${villagePhone}%'
+           </if>
+           <if test="villageLeading != null">
+              and village_leading like '%${villageLeading}%'
+           </if>
+       </where>
+    </select>
+</mapper>

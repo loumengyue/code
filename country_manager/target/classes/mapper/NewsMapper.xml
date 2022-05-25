@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.NewsMapper">
+    <resultMap id="newsMap" type="news">
+        <id column="new_id" property="newId"></id>
+        <result column="new_title" property="newTitle"></result>
+        <result column="new_content" property="newContent"></result>
+        <result column="new_time" property="newTime"></result>
+        <result column="new_person" property="newPerson"></result>
+        <result column="new_priority" property="newPriority"></result>
+    </resultMap>
+    <select id="getAllNews" resultMap="newsMap" parameterType="news">
+        select * from news_manage
+        <where>
+            <if test="newTitle!=null and newTitle!=''">
+                and new_title like '%${newTitle}%'
+            </if>
+            <if test="newPerson !=null and newPerson!=''">
+                and new_person like '%${newPerson}%'
+            </if>
+        </where>
+    </select>
+
+    <select id="getNewsById" parameterType="int">
+        select * from news_manage where news_id=#{id}
+    </select>
+    <insert id="addNews" parameterType="news">
+        insert into news_manage(new_title,new_content,new_time,new_person,new_priority) values(#{newTitle},#{newContent},#{newTime},#{newPerson},#{newPriority})
+    </insert>
+    <delete id="deleteNews" parameterType="int">
+        delete from news_manage where news_id=#{id}
+    </delete>
+    <update id="updateNews" parameterType="news">
+        update news_manage set new_title=#{newTitle},new_content=#{newContent},new_time=#{newTime},new_person=#{newPerson},new_priority=#{newPriority} where news_id=#{newsId}
+    </update>
+</mapper>

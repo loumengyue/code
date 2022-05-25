@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.OrganMapper">
+    <resultMap id="organMap" type="organ">
+        <id column="organ_id" property="organId"></id>
+        <result column="organ_name" property="organName"></result>
+        <result column="organ_duty" property="organDuty"></result>
+        <result column="organ_leader" property="organLeader"></result>
+        <result column="organ_phone" property="organPhone"></result>
+        <result column="organ_leader_phone" property="organLeaderPhone"></result>
+        <result column="organ_time" property="organTime"></result>
+        <result column="organ_village_id" property="organVillageId"></result>
+        <association property="village" javaType="village">
+            <id column="village_id" property="villageId"></id>
+            <result column="village_num" property="villageNum"></result>
+            <result column="village_name" property="villageName"></result>
+            <result column="village_address" property="villageAddress"></result>
+            <result column="village_leading" property="villageLeading"></result>
+            <result column="village_phone" property="villagePhone"></result>
+            <result column="village_organ_id" property="villageOrganId"></result>
+        </association>
+    </resultMap>
+    <select id="getOrganList" resultMap="organMap">
+       select * from village_manage vm,organ_manage om where vm.village_id=om.organ_village_id
+    </select>
+    <select id="getAllOrgan" resultMap="organMap" parameterType="organ">
+        select * from village_manage vm,organ_manage om where vm.village_id=om.organ_village_id
+        <if test="organName!=null and organName!=''">
+           and organ_name like '%${organName}%'
+        </if>
+        <if test="organLeader!=null and organLeader!=''">
+            and organ_leader like '%${organLeader}%'
+        </if>
+    </select>
+    <select id="getOrganById" resultMap="organMap" parameterType="int">
+       select * from village_manage vm,organ_manage om where vm.village_id=om.organ_village_id and om.organ_id=#{id}
+    </select>
+    <select id="getOrganByName" parameterType="string" resultType="organ">
+        select organ_id from organ_manage where organ_name=#{organName}
+    </select>
+    <insert id="addOrgan" parameterType="organ">
+       insert into organ_manage(organ_name,organ_duty,organ_leader,organ_phone,organ_leader_phone,organ_time,organ_village_id) values(#{organName},#{organDuty},#{organLeader},#{organPhone},#{organLeaderPhone},#{organTime},#{organVillageId})
+    </insert>
+    <delete id="deleteOrgan" parameterType="int">
+        delete from organ_manage where organ_id=#{id}
+    </delete>
+    <update id="updateOrgan" parameterType="organ">
+        update organ_manage set organ_name=#{organName},organ_duty=#{organDuty},organ_phone=#{organPhone},organ_leader_phone=#{organLeaderPhone},organ_time=#{organTime},organ_village_id=#{organVillageId} where organ_id=#{organId}
+    </update>
+</mapper>

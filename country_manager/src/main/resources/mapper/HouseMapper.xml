@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.HouseMapper">
+    <resultMap id="houseMap" type="house">
+        <id column="house_id" property="houseId"></id>
+        <result column="house_address" property="houseAddress"></result>
+        <result column="house_population_id" property="housePopulationId"></result>
+        <result column="house_apply_time" property="houseApplyTime"></result>
+        <result column="house_status" property="houseStatus"></result>
+        <result column="house_area" property="houseArea"></result>
+        <result column="house_desc" property="houseDesc"></result>
+        <result column="house_village_id" property="houseVillageId"></result>
+        <association property="population" javaType="population">
+            <id column="id" property="id"></id>
+            <result column="population_id" property="populationId"></result>
+            <result column="population_name"  property="populationName"></result>
+        </association>
+        <association property="village" javaType="village">
+            <id column="village_id" property="villageId"></id>
+            <result column="village_num" property="villageNum"></result>
+            <result column="village_name" property="villageName"></result>
+        </association>
+    </resultMap>
+    <select id="getHouseList" resultMap="houseMap">
+        select * from house_manage hm,village_manage vm,population_manage pm where hm.house_population_id=pm.population_id and hm.house_village_id=vm.village_id
+
+    </select>
+    <select id="getAllHouse" resultMap="houseMap">
+        select * from house_manage hm,village_manage vm,population_manage pm where hm.house_population_id=pm.population_id and hm.house_village_id=vm.village_id
+        <if test="houseAddress!=null and houseAddress!='' ">
+            and house_address like '%${houseAddress}%'
+        </if>
+        <if test="housePopulationId!=null and housePopulationId!=''">
+            and house_population_id like '%${housePopulationId}%'
+        </if>
+        <if test="houseStatus!=null and houseStatus!=''">
+            and house_status like '%${houseStatus}%'
+        </if>
+    </select>
+    <select id="getHouseById" parameterType="int" resultMap="houseMap">
+        select * from house_manage hm,village_manage vm,population_manage pm where hm.house_population_id=pm.population_id and hm.house_village_id=vm.village_id and house_id=#{id}
+
+    </select>
+
+    <select id="getHouseByVillageId" parameterType="int" resultMap="houseMap">
+        select * from house_manage hm,village_manage vm,population_manage pm where hm.house_population_id=pm.population_id and hm.house_village_id=vm.village_id and house_village_id=#{id}
+
+    </select>
+    <insert id="addHouse" parameterType="house">
+        insert into house_manage(house_address,house_population_id,house_apply_time,house_status,house_area,house_desc,house_village_id) value(#{houseAddress},#{housePopulationId},#{houseApplyTime},#{houseStatus},#{houseArea},#{houseDesc},#{houseVillageId})
+    </insert>
+    <delete id="deleteHouse" parameterType="int">
+        delete from house_manage where house_id=#{id}
+    </delete>
+    <update id="updateHouse" parameterType="house">
+        update house_manage set house_address=#{houseAddress},house_population_id=#{housePopulationId},house_apply_time=#{houseApplyTime},house_status=#{houseStatus},house_area=#{houseArea},house_desc=#{houseDesc},house_village_id=#{houseVillageId} where  house_id=#{houseId}
+    </update>
+</mapper>

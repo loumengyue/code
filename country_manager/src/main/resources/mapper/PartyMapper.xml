@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiumu.country_manager.mapper.PartyMapper">
+    <resultMap id="partyMap" type="party">
+        <id column="party_id" property="partyId"></id>
+        <result column="party_name" property="partyName"></result>
+        <result column="party_start_time" property="partyStartTime"></result>
+        <result column="parent_party" property="parentParty"></result>
+    </resultMap>
+    <select id="getAllParty" resultMap="partyMap">
+        select * from party_manage pm1,party_manage pm2 where pm1.parent_party=pm2.party_id
+        <if test="partyId!=null and partyId!=''">
+            and pm1.party_id like '%${partyId}%'
+        </if>
+        <if test="partyName!=null and partyName!=''">
+            and pm1.party_name like '%${partyName}%'
+        </if>
+    </select>
+    <select id="getPartyById" parameterType="int">
+        select * from party_manage pm1,party_manage pm2 where pm1.party_id=#{id}
+    </select>
+    <insert id="addParty" parameterType="party">
+        insert into party_manage(party_name,party_real_person,party_active_person,parent_party) values(#{partyName},#{partyRealPerson},#{partyActivePerson},#{parentParty})
+    </insert>
+    <delete id="deleteParty" parameterType="int">
+        delete from party_manage where party_id=#{id}
+    </delete>
+    <update id="updateParty" parameterType="party">
+        update party_manage set party_name=#{partyName},party_real_person=#{partyRealPerson},party_active_person=#{partyActivePerson},parent_party=#{parentParty} where party_id=#{partyId}
+    </update>
+</mapper>
